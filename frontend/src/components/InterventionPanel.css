@@ -1,0 +1,261 @@
+.intervention-card {
+  min-height: 400px;
+}
+
+.interventions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.intervention-item {
+  background: rgba(233, 241, 250, 0.6);
+  border-radius: 12px;
+  border-left: 4px solid;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 171, 228, 0.2);
+}
+
+.intervention-item.priority-high {
+  border-left-color: #ff4757;
+  background: rgba(255, 71, 87, 0.08);
+}
+
+.intervention-item.priority-medium {
+  border-left-color: #ffa502;
+  background: rgba(255, 165, 2, 0.08);
+}
+
+.intervention-item.priority-low {
+  border-left-color: #26de81;
+  background: rgba(38, 222, 129, 0.08);
+}
+
+.intervention-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 171, 228, 0.4);
+}
+
+.intervention-item.expanded {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.intervention-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  cursor: pointer;
+}
+
+.intervention-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #00ABE4 0%, #0095d1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(0, 171, 228, 0.5);
+}
+
+.intervention-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
+}
+
+.intervention-info {
+  flex: 1;
+}
+
+.intervention-info h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: rgba(26, 26, 46, 0.95);
+}
+
+.intervention-info p {
+  font-size: 0.9rem;
+  color: rgba(26, 26, 46, 0.7);
+  line-height: 1.5;
+}
+
+.intervention-expand {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.intervention-expand svg {
+  width: 100%;
+  height: 100%;
+  stroke-width: 2;
+  transition: transform 0.3s ease;
+}
+
+.intervention-item.expanded .intervention-expand svg {
+  transform: rotate(180deg);
+}
+
+.intervention-actions {
+  padding: 0 1.25rem 1.25rem 5.25rem;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.intervention-actions h5 {
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  color: rgba(26, 26, 46, 0.9);
+}
+
+.intervention-actions ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.intervention-actions li {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 0.75rem;
+  background: rgba(233, 241, 250, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 171, 228, 0.3);
+}
+
+.action-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #00ABE4 0%, #0095d1 100%);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 171, 228, 0.6);
+}
+
+.action-text {
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(26, 26, 46, 0.85);
+}
+
+.intervention-priority {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.priority-badge.high {
+  background: rgba(255, 71, 87, 0.2);
+  color: #ff4757;
+}
+
+.priority-badge.medium {
+  background: rgba(255, 165, 2, 0.2);
+  color: #ffa502;
+}
+
+.priority-badge.low {
+  background: rgba(38, 222, 129, 0.2);
+  color: #26de81;
+}
+
+.no-interventions {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(26, 26, 46, 0.6);
+}
+
+/* Study Tips Section */
+.study-tips-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(0, 171, 228, 0.2);
+}
+
+.study-tips-section h4 {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: rgba(26, 26, 46, 0.9);
+}
+
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.tip-card {
+  background: rgba(233, 241, 250, 0.6);
+  padding: 1.25rem;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 171, 228, 0.3);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 171, 228, 0.2);
+}
+
+.tip-card:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 171, 228, 0.4);
+  border-color: rgba(0, 171, 228, 0.6);
+}
+
+.tip-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.tip-card h5 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: rgba(26, 26, 46, 0.95);
+}
+
+.tip-card p {
+  font-size: 0.85rem;
+  color: rgba(26, 26, 46, 0.7);
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .tips-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .intervention-actions {
+    padding-left: 1.25rem;
+  }
+}

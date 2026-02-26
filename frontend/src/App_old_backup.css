@@ -1,0 +1,836 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app-container {
+  min-height: 100vh;
+  background: #f8f9fa;
+  color: #1f2937;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* 3D Video Background - Dynamic based on prediction */
+.video-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  background: #E9F1FA;
+  transition: all 1s ease;
+  /* GPU acceleration */
+  transform: translateZ(0);
+  will-change: background;
+  backface-visibility: hidden;
+}
+
+/* Animated 3D Wave Background */
+.animated-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* GPU acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.wave-layer {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  transition: all 1.5s ease;
+  /* GPU acceleration for smooth scrolling */
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  pointer-events: none;
+}
+
+/* Initial state - Blue theme */
+.video-background.initial .wave-1,
+.video-background.risk-low .wave-1 {
+  background: radial-gradient(circle at center, 
+    rgba(0, 171, 228, 0.3) 0%, 
+    rgba(0, 171, 228, 0.2) 25%, 
+    rgba(0, 150, 200, 0.1) 50%, 
+    transparent 70%);
+  animation: wave1 20s ease-in-out infinite;
+  opacity: 0.5;
+}
+
+.video-background.initial .wave-2,
+.video-background.risk-low .wave-2 {
+  background: radial-gradient(circle at center, 
+    rgba(0, 171, 228, 0.3) 0%, 
+    rgba(0, 171, 228, 0.2) 25%, 
+    rgba(102, 200, 255, 0.1) 50%, 
+    transparent 70%);
+  animation: wave2 15s ease-in-out infinite reverse;
+  opacity: 0.4;
+}
+
+.video-background.initial .wave-3,
+.video-background.risk-low .wave-3 {
+  background: radial-gradient(circle at center, 
+    rgba(0, 150, 200, 0.4) 0%, 
+    rgba(0, 171, 228, 0.2) 25%, 
+    rgba(0, 171, 228, 0.1) 50%, 
+    transparent 70%);
+  animation: wave3 25s ease-in-out infinite;
+  opacity: 0.3;
+}
+
+/* Medium Risk - Yellow/Orange Warning */
+.video-background.risk-medium .wave-1 {
+  background: radial-gradient(circle at center, 
+    rgba(255, 165, 0, 0.3) 0%, 
+    rgba(255, 200, 0, 0.2) 25%, 
+    rgba(255, 140, 0, 0.1) 50%, 
+    transparent 70%);
+  animation: wave1 15s ease-in-out infinite, pulse 3s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+.video-background.risk-medium .wave-2 {
+  background: radial-gradient(circle at center, 
+    rgba(255, 200, 0, 0.3) 0%, 
+    rgba(255, 165, 0, 0.2) 25%, 
+    rgba(255, 140, 0, 0.1) 50%, 
+    transparent 70%);
+  animation: wave2 12s ease-in-out infinite reverse, pulse 3s ease-in-out infinite;
+  opacity: 0.5;
+}
+
+.video-background.risk-medium .wave-3 {
+  background: radial-gradient(circle at center, 
+    rgba(255, 140, 0, 0.4) 0%, 
+    rgba(255, 165, 0, 0.2) 25%, 
+    rgba(255, 200, 0, 0.1) 50%, 
+    transparent 70%);
+  animation: wave3 18s ease-in-out infinite, pulse 3s ease-in-out infinite;
+  opacity: 0.4;
+}
+
+/* High Risk - Red Danger Alert */
+.video-background.risk-high .wave-1 {
+  background: radial-gradient(circle at center, 
+    rgba(255, 0, 0, 0.4) 0%, 
+    rgba(255, 50, 50, 0.3) 25%, 
+    rgba(200, 0, 0, 0.1) 50%, 
+    transparent 70%);
+  animation: wave1 10s ease-in-out infinite, pulse 2s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+.video-background.risk-high .wave-2 {
+  background: radial-gradient(circle at center, 
+    rgba(255, 50, 50, 0.4) 0%, 
+    rgba(255, 0, 0, 0.3) 25%, 
+    rgba(200, 0, 0, 0.1) 50%, 
+    transparent 70%);
+  animation: wave2 8s ease-in-out infinite reverse, pulse 2s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+.video-background.risk-high .wave-3 {
+  background: radial-gradient(circle at center, 
+    rgba(200, 0, 0, 0.5) 0%, 
+    rgba(255, 0, 0, 0.3) 25%, 
+    rgba(255, 50, 50, 0.1) 50%, 
+    transparent 70%);
+  animation: wave3 12s ease-in-out infinite, pulse 2s ease-in-out infinite;
+  opacity: 0.5;
+}
+
+@keyframes wave1 {
+  0%, 100% {
+    transform: translate3d(-25%, -25%, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(-20%, -30%, 0) rotate(180deg) scale(1.1);
+  }
+}
+
+@keyframes wave2 {
+  0%, 100% {
+    transform: translate3d(-30%, -30%, 0) rotate(0deg) scale(1.1);
+  }
+  50% {
+    transform: translate3d(-35%, -20%, 0) rotate(240deg) scale(1);
+  }
+}
+
+@keyframes wave3 {
+  0%, 100% {
+    transform: translate3d(-25%, -30%, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(-35%, -25%, 0) rotate(180deg) scale(1.15);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(233, 241, 250, 0.3);
+  transition: background 1.5s ease;
+  /* Removed expensive backdrop-filter for better scroll performance */
+  pointer-events: none;
+  transform: translateZ(0);
+}
+
+.video-background.risk-high .video-overlay {
+  background: rgba(255, 230, 230, 0.6);
+}
+
+.video-background.risk-medium .video-overlay {
+  background: rgba(255, 245, 230, 0.6);
+}
+
+.video-background.initial .video-overlay,
+.video-background.risk-low .video-overlay {
+  background: rgba(233, 241, 250, 0.4);
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, 
+      rgba(233, 241, 250, 0.85) 0%, 
+      rgba(200, 225, 245, 0.75) 25%, 
+      rgba(180, 215, 240, 0.65) 50%, 
+      rgba(200, 225, 245, 0.75) 75%, 
+      rgba(233, 241, 250, 0.85) 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, 
+      rgba(200, 225, 245, 0.85) 0%, 
+      rgba(180, 215, 240, 0.75) 25%, 
+      rgba(0, 171, 228, 0.15) 50%, 
+      rgba(180, 215, 240, 0.75) 75%, 
+      rgba(200, 225, 245, 0.85) 100%);
+  }
+}
+
+/* Particles overlay effect - simplified for performance */
+.particles-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(0, 171, 228, 0.3), transparent),
+    radial-gradient(2px 2px at 60px 70px, rgba(0, 171, 228, 0.4), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(0, 171, 228, 0.3), transparent),
+    radial-gradient(1px 1px at 160px 120px, rgba(0, 171, 228, 0.2), transparent);
+  background-size: 200px 200px;
+  background-position: 0 0, 40px 60px, 70px 100px, 150px 50px;
+  /* Removed animation for better scroll performance */
+  pointer-events: none;
+  transition: all 1s ease;
+  opacity: 0.5;
+}
+
+.video-background.risk-high .particles-overlay {
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(255, 0, 0, 0.4), transparent),
+    radial-gradient(2px 2px at 60px 70px, rgba(255, 50, 50, 0.5), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255, 0, 0, 0.4), transparent),
+    radial-gradient(1px 1px at 160px 120px, rgba(255, 50, 50, 0.3), transparent);
+  opacity: 0.6;
+}
+
+.video-background.risk-medium .particles-overlay {
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(255, 165, 0, 0.4), transparent),
+    radial-gradient(2px 2px at 60px 70px, rgba(255, 200, 0, 0.5), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255, 165, 0, 0.4), transparent),
+    radial-gradient(1px 1px at 160px 120px, rgba(255, 200, 0, 0.3), transparent);
+  opacity: 0.6;
+}
+
+@keyframes particlesFloat {
+  0% {
+    background-position: 0 0, 40px 60px, 130px 270px, 70px 100px, 150px 50px, 80px 200px, 120px 90px;
+  }
+  100% {
+    background-position: 200px 200px, 240px 260px, 330px 470px, 270px 300px, 350px 250px, 280px 400px, 320px 290px;
+  }
+}
+/* Header - Clean Design */
+.app-header {
+  background: white;
+  border-bottom: 2px solid #e5e7eb;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.header-content h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.header-content p {
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+/* Dashboard */
+.dashboard {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.analyze-section {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.analyze-button {
+  background: linear-gradient(135deg, #00ABE4 0%, #0095d1 100%);
+  border: none;
+  color: #FFFFFF;
+  padding: 1rem 3rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  /* GPU acceleration */
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 171, 228, 0.6), 0 0 40px rgba(0, 171, 228, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.analyze-button::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.analyze-button:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 30px rgba(0, 171, 228, 0.8), 0 0 50px rgba(0, 171, 228, 0.5);
+}
+
+.analyze-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.analyze-button.analyzing {
+  background: linear-gradient(135deg, #66d9ff 0%, #00ABE4 100%);
+  animation: pulse 2s infinite;
+  box-shadow: 0 4px 20px rgba(0, 171, 228, 0.8), 0 0 60px rgba(0, 171, 228, 0.5);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(0, 171, 228, 0.5);
+  }
+  50% {
+    box-shadow: 0 4px 30px rgba(0, 171, 228, 0.8);
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.analyze-button svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
+}
+
+.analyze-button:hover:not(:disabled) {
+  transform: translateZ(0) translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.analyze-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.analyze-button.analyzing {
+  background: linear-gradient(135deg, #a8b3ea 0%, #9f83c4 100%);
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Input Fields - Horizontal Row */
+.input-fields-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+/* Output Section */
+.output-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+/* Legacy support - can be removed */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  /* Performance optimization */
+  will-change: scroll-position;
+}
+
+.metrics-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.analysis-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: sticky;
+  top: 100px;
+}
+
+.metric-card {
+  background: rgba(255, 255, 255, 0.98);
+  /* Removed backdrop-filter for performance */
+  border: 1px solid rgba(0, 171, 228, 0.3);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 171, 228, 0.2);
+  /* GPU acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.metric-card:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 171, 228, 0.6);
+  transform: translateZ(0) translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 171, 228, 0.4);
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  flex-shrink: 0;
+}
+
+.academic-card .header-icon {
+  background: linear-gradient(135deg, #00ABE4 0%, #0095d1 100%);
+  box-shadow: 0 4px 15px rgba(0, 171, 228, 0.5);
+}
+
+.attendance-card .header-icon {
+  background: linear-gradient(135deg, #0095d1 0%, #00ABE4 100%);
+  box-shadow: 0 4px 15px rgba(0, 171, 228, 0.5);
+}
+
+.socioeconomic-card .header-icon {
+  background: linear-gradient(135deg, #00ABE4 0%, #66d9ff 100%);
+  box-shadow: 0 4px 15px rgba(0, 171, 228, 0.5);
+}
+
+.header-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke-width: 2;
+}
+
+.card-title {
+  flex: 1;
+}
+
+.card-title h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.card-title p {
+  font-size: 0.875rem;
+  color: rgba(26, 26, 46, 0.6);
+}
+
+.edit-btn {
+  background: rgba(0, 171, 228, 0.1);
+  border: 1px solid rgba(0, 171, 228, 0.3);
+  color: #00ABE4;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: rgba(0, 171, 228, 0.2);
+  border-color: rgba(0, 171, 228, 0.5);
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metric-item label {
+  font-size: 0.875rem;
+  color: rgba(26, 26, 46, 0.7);
+  font-weight: 500;
+}
+
+.metric-value {
+  background: rgba(233, 241, 250, 0.6);
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border: 1px solid rgba(0, 171, 228, 0.2);
+}
+
+.metric-item input,
+.metric-item select {
+  background: rgba(233, 241, 250, 0.6);
+  border: 1px solid rgba(0, 171, 228, 0.3);
+  color: #00ABE4;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.metric-item input:focus,
+.metric-item select:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 171, 228, 0.8);
+  box-shadow: 0 0 20px rgba(0, 171, 228, 0.3);
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #00ABE4 0%, #0095d1 100%);
+  border: none;
+  color: #FFFFFF;
+  padding: 0.875rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 171, 228, 0.5);
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 171, 228, 0.7);
+}
+
+/* Empty State Styles */
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: rgba(26, 26, 46, 0.6);
+}
+
+.empty-state svg {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  opacity: 0.4;
+  stroke-width: 1.5;
+}
+
+.empty-state h4 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: rgba(26, 26, 46, 0.8);
+}
+
+.empty-state p {
+  font-size: 0.95rem;
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Analysis Card Styles - optimized */
+.analysis-card {
+  background: rgba(255, 255, 255, 0.98);
+  /* Removed backdrop-filter for scroll performance */
+  border: 1px solid rgba(0, 171, 228, 0.3);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 171, 228, 0.15);
+  position: relative;
+  z-index: 15;
+  /* GPU acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.card-content {
+  margin-top: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Chart container styles moved to RiskAssessment.css for better specificity */
+
+/* Input placeholder styling */
+.metric-item input::placeholder {
+  color: rgba(26, 26, 46, 0.4);
+}
+
+.metric-item input:disabled,
+.metric-item select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Floating animation for cards - disabled for better scroll performance */
+@keyframes float {
+  0%, 100% {
+    transform: translateZ(0) translateY(0px);
+  }
+  50% {
+    transform: translateZ(0) translateY(-3px);
+  }
+}
+
+/* Disabled animations - comment out to re-enable
+.metric-card:nth-child(1) {
+  animation: float 6s ease-in-out infinite;
+}
+
+.metric-card:nth-child(2) {
+  animation: float 7s ease-in-out infinite 0.5s;
+}
+
+.metric-card:nth-child(3) {
+  animation: float 8s ease-in-out infinite 1s;
+}
+*/
+
+/* Glow effect on focus */
+.metric-item input:focus,
+.metric-item select:focus {
+  box-shadow: 0 0 0 3px rgba(0, 171, 228, 0.3), 
+              0 0 20px rgba(0, 171, 228, 0.4);
+}
+
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analysis-column {
+    position: static;
+  }
+
+  .input-fields-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .student-info {
+    align-items: flex-start;
+  }
+
+  .dashboard {
+    padding: 1rem;
+  }
+
+  .input-fields-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* ===============================================
+   3D EFFECTS & ENHANCEMENTS
+   =============================================== */
+
+/* Enable 3D perspective - simplified */
+.app-container {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard {
+  transition: none;
+  position: relative;
+  z-index: 5;
+}
+
+/* Simplified card hover effects for performance */
+.metric-card,
+.panel-card {
+  transition: box-shadow 0.2s ease;
+  will-change: auto;
+}
+
+.metric-card:hover,
+.panel-card:hover {
+  box-shadow: 0 12px 40px rgba(0, 171, 228, 0.25);
+}
+
+/* 3D Depth - removed for performance */
+.dashboard-grid {
+  display: grid;
+}
+
+.metrics-column,
+.analysis-column {
+  position: relative;
+}
+
+/* Staggered animation - Removed for performance */
+
+/* Simplified glassmorphism - no transform */
+.metric-card {
+  background: rgba(255, 255, 255, 0.98);
+  /* Removed backdrop-filter for scroll performance */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
+  z-index: 10;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Analysis cards - simplified */
+.analysis-card,
+.panel-card {
+  position: relative;
+  z-index: 10;
+}
+
+/* Button - simplified */
+.analyze-button {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  z-index: 20;
+}
+
+.analyze-button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 10px 30px rgba(0, 171, 228, 0.3);
+}
+
+.analyze-button:active {
+  transform: scale(0.97);
+}
+
+/* Logo - simplified */
+.logo {
+  transition: transform 0.2s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+/* 3D effects - optimized and simplified */

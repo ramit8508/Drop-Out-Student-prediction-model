@@ -1,0 +1,50 @@
+.logo-svg {
+  filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.3));
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.logo-svg:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 6px 16px rgba(102, 126, 234, 0.4));
+}
+
+/* Subtle animations */
+@keyframes shieldPulse {
+  0%, 100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes graphDraw {
+  from {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+  }
+}
+
+.logo-shield {
+  animation: shieldPulse 3s ease-in-out infinite;
+}
+
+.logo-graph polyline {
+  animation: graphDraw 2s ease-out forwards;
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .logo-svg {
+    filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.5));
+  }
+  
+  .logo-svg:hover {
+    filter: drop-shadow(0 6px 16px rgba(102, 126, 234, 0.6));
+  }
+}
