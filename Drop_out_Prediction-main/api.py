@@ -9,12 +9,14 @@ import os
 app = FastAPI(title="Student Dropout Prediction API")
 
 # Get allowed origins from environment variable
+# For production, set ALLOWED_ORIGINS in Render: https://your-frontend.vercel.app
+# For development, it defaults to "*" (allow all)
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 
 # Add CORS middleware to allow frontend requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=["*"] if "*" in ALLOWED_ORIGINS else ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
