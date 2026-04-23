@@ -68,11 +68,33 @@ const FIELD_DESCRIPTIONS = [
   'National GDP at time of enrollment (economic indicator)'                               // 27
 ];
 
+// Grouping for section labels
+const SECTION_RANGES = [
+  { start: 0, label: 'Personal & Application' },
+  { start: 3, label: 'Academic Program' },
+  { start: 6, label: 'Family Background' },
+  { start: 10, label: 'Financial Status' },
+  { start: 13, label: 'Demographics' },
+  { start: 17, label: '1st Semester Performance' },
+  { start: 21, label: '2nd Semester Performance' },
+  { start: 25, label: 'Economic Indicators' },
+];
+
+const getCurrentSection = (questionIndex) => {
+  for (let i = SECTION_RANGES.length - 1; i >= 0; i--) {
+    if (questionIndex >= SECTION_RANGES[i].start) {
+      return SECTION_RANGES[i].label;
+    }
+  }
+  return '';
+};
+
 const DataInputFields = ({ data, onUpdate, isEditable, onComplete }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   
   const totalQuestions = FIELD_NAMES.length;
   const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+  const answeredCount = Object.values(data).filter(v => v !== '').length;
 
   const handleChange = (value) => {
     const newData = { ...data };
@@ -95,21 +117,29 @@ const DataInputFields = ({ data, onUpdate, isEditable, onComplete }) => {
     }
   };
 
+  // Handle Enter key to advance
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && isCurrentAnswered) {
+      handleNext();
+    }
+  };
+
   const renderCurrentInput = () => {
     const fieldId = `field${currentQuestion}`;
     const inputConfig = getFieldInputType(fieldId);
     const currentValue = data[fieldId] || '';
 
     if (inputConfig.type === 'select') {
-      // Render dropdown for categorical fields
       return (
         <select
           value={currentValue}
           onChange={(e) => handleChange(e.target.value)}
           disabled={!isEditable}
           className="quiz-select"
+          onKeyDown={handleKeyDown}
+          id={`question-${currentQuestion}`}
         >
-          <option value="">-- Select an option --</option>
+          <option value="">Choose an option...</option>
           {inputConfig.options.map((option, idx) => (
             <option key={idx} value={option}>
               {option}
@@ -118,7 +148,6 @@ const DataInputFields = ({ data, onUpdate, isEditable, onComplete }) => {
         </select>
       );
     } else {
-      // Render number input for numerical fields
       return (
         <input
           type="number"
@@ -126,30 +155,41 @@ const DataInputFields = ({ data, onUpdate, isEditable, onComplete }) => {
           value={currentValue}
           onChange={(e) => handleChange(e.target.value)}
           disabled={!isEditable}
-          placeholder="Enter value"
+          placeholder="Type your answer..."
           className="quiz-input"
+          onKeyDown={handleKeyDown}
+          id={`question-${currentQuestion}`}
+          autoFocus
         />
       );
     }
   };
 
   const isCurrentAnswered = data[`field${currentQuestion}`] && data[`field${currentQuestion}`] !== '';
+  const sectionLabel = getCurrentSection(currentQuestion);
 
   return (
     <div className="quiz-container">
+      {/* Section Label */}
+      <div className="quiz-section-label">
+        <span className="section-number">{sectionLabel}</span>
+        <div className="section-line"></div>
+      </div>
+
       {/* Progress Bar */}
       <div className="quiz-progress">
+        <div className="progress-header">
+          <span className="progress-label">{answeredCount} of {totalQuestions} answered</span>
+          <span className="progress-count">{currentQuestion + 1}/{totalQuestions}</span>
+        </div>
         <div className="progress-bar">
           <div className="progress-fill" style={{ width: `${progress}%` }}></div>
-        </div>
-        <div className="progress-text">
-          Question {currentQuestion + 1} of {totalQuestions}
         </div>
       </div>
 
       {/* Question Card */}
       <div className="quiz-question-card">
-        <div className="question-number">Q{currentQuestion + 1}</div>
+        <div className="question-number">Question {currentQuestion + 1}</div>
         <h2 className="question-title">{FIELD_NAMES[currentQuestion]}</h2>
         <p className="question-description">{FIELD_DESCRIPTIONS[currentQuestion]}</p>
         
@@ -165,7 +205,10 @@ const DataInputFields = ({ data, onUpdate, isEditable, onComplete }) => {
           onClick={handlePrevious}
           disabled={currentQuestion === 0}
         >
-          ← Previous
+          <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Previous
         </button>
         
         <button 
@@ -173,11 +216,17 @@ const DataInputFields = ({ data, onUpdate, isEditable, onComplete }) => {
           onClick={handleNext}
           disabled={!isCurrentAnswered}
         >
-          {currentQuestion === totalQuestions - 1 ? 'Finish ✓' : 'Next →'}
+          {currentQuestion === totalQuestions - 1 ? 'Finish' : 'Continue'}
+          <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {currentQuestion === totalQuestions - 1 
+              ? <polyline points="20 6 9 17 4 12"/>
+              : <polyline points="9 18 15 12 9 6"/>
+            }
+          </svg>
         </button>
       </div>
 
-      {/* Quick Jump (Optional) */}
+      {/* Quick Jump Dots */}
       <div className="quiz-dots">
         {FIELD_NAMES.map((_, index) => (
           <div

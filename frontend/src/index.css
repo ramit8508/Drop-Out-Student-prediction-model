@@ -1,13 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 
 :root {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  line-height: 1.5;
+  /* Warm, human-feeling palette */
+  --ink: #2c2c2c;
+  --ink-light: #5a5a5a;
+  --ink-muted: #8a8a8a;
+  --ink-faint: #b0b0b0;
+  
+  --paper: #faf8f5;
+  --paper-warm: #f5f0e8;
+  --paper-alt: #eee9df;
+  --paper-card: #ffffff;
+  
+  --accent: #c45d3e;
+  --accent-soft: #e8a48e;
+  --accent-bg: #fdf0ec;
+  
+  --sage: #6b8f71;
+  --sage-soft: #a3c4a8;
+  --sage-bg: #eef5ef;
+  
+  --gold: #c49b3c;
+  --gold-soft: #e4c97a;
+  --gold-bg: #fdf7eb;
+  
+  --slate: #64748b;
+  --slate-soft: #94a3b8;
+  --slate-bg: #f1f5f9;
+  
+  --danger: #b44a3f;
+  --danger-soft: #e8a59f;
+  --danger-bg: #fdeeed;
+  
+  --border: #e5ddd3;
+  --border-light: #efe9e0;
+  
+  --shadow-sm: 0 1px 2px rgba(44, 44, 44, 0.04), 0 1px 4px rgba(44, 44, 44, 0.03);
+  --shadow-md: 0 2px 8px rgba(44, 44, 44, 0.06), 0 4px 16px rgba(44, 44, 44, 0.04);
+  --shadow-lg: 0 4px 12px rgba(44, 44, 44, 0.06), 0 8px 32px rgba(44, 44, 44, 0.05);
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+  
+  font-family: var(--font-body);
+  line-height: 1.6;
   font-weight: 400;
-
-  color-scheme: dark;
+  color: var(--ink);
   
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -23,9 +66,9 @@
 
 body {
   margin: 0;
-  display: flex;
   min-width: 320px;
   min-height: 100vh;
+  background: var(--paper);
 }
 
 #root {
@@ -34,9 +77,21 @@ body {
 
 button {
   font-family: inherit;
+  cursor: pointer;
 }
 
 input,
 select {
   font-family: inherit;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection */
+::selection {
+  background: var(--accent-soft);
+  color: var(--ink);
 }

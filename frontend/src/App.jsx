@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import './App.css';
-import Logo from './components/Logo';
 import DataInputFields from './components/DataInputFields';
 import RiskAssessment from './components/RiskAssessment';
 import { encodeStudentData } from './utils/fieldEncodings';
@@ -116,152 +115,39 @@ function App() {
     }
   };
 
-  const calculateRisk = () => {
-    
-    // ENCODE DATA: Convert strings to numbers
-   
-    const encodedData = encodeStudentData(studentData);
-    
-    // Convert to array format for 28 input parameters
-    const modelInput = [];
-    for (let i = 0; i < 28; i++) {
-      modelInput.push(encodedData[`field${i}`] || 0);
-    }
-    
-    console.log('Original Data:', studentData);
-    console.log('Encoded Data (object format):', encodedData);
-    console.log('Model Input Array:', modelInput);
-    console.log('Model Input JSON:', JSON.stringify(modelInput));
-    
-    // ============================================
-    // YOUR MODEL INTEGRATION - SEND AS JSON
-    // ============================================
-    /*
-    // Option 1: Send as pure array [0, 12, 1, ...]
-    const response = await fetch('YOUR_MODEL_API_URL', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(modelInput)  // Sends: [0, 12, 1, 9500, ...]
-    });
-    
-    // Option 2: Send as object with "data" key
-    const response = await fetch('YOUR_MODEL_API_URL', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ inputs: modelInput })  // Sends: {"inputs": [0, 12, 1, ...]}
-    });
-    
-    const modelResult = await response.json();
-    
-    // Expected model response format:
-    // {
-    //   riskScore: 75,
-    //   riskLevel: 2,
-    //   factors: [...]
-    // }
-    */
-    
-    // ============================================
-    // DEMO: Simulate model response
-    // ============================================
-    let riskScore = 0;
-    let factors = [];
-
-    // Use encoded numerical values
-    const gpa = encodedData.field0 || 0;
-    const gender = encodedData.field1 || 0;
-    const testScore = encodedData.field2 || 0;
-    const studyHours = encodedData.field3 || 0;
-    const householdIncome = encodedData.field10 || 0;
-    const parentEducation = encodedData.field11 || 0;
-    const stressLevel = encodedData.field18 || 0;
-
-    // Calculate risk based on encoded values
-    if (gpa < 2.5) {
-      const impact = Math.round((2.5 - gpa) * 20);
-      riskScore += impact;
-      factors.push({
-        name: 'Low GPA',
-        impact: impact,
-        severity: gpa < 2.0 ? 'high' : 'medium'
-      });
-    }
-
-    if (testScore < 70) {
-      const impact = Math.round((70 - testScore) / 2);
-      riskScore += impact;
-      factors.push({
-        name: 'Low Test Scores',
-        impact: impact,
-        severity: testScore < 60 ? 'high' : 'medium'
-      });
-    }
-
-    if (studyHours < 10) {
-      const impact = 10;
-      riskScore += impact;
-      factors.push({
-        name: 'Insufficient Study Time',
-        impact: impact,
-        severity: 'medium'
-      });
-    }
-
-    if (householdIncome < 30000) {
-      const impact = 15;
-      riskScore += impact;
-      factors.push({
-        name: 'Financial Constraints',
-        impact: impact,
-        severity: 'high'
-      });
-    }
-
-    if (parentEducation < 2) {  // Less than High School
-      const impact = 12;
-      riskScore += impact;
-      factors.push({
-        name: 'Low Parent Education',
-        impact: impact,
-        severity: 'medium'
-      });
-    }
-
-    if (stressLevel > 7) {
-      const impact = 15;
-      riskScore += impact;
-      factors.push({
-        name: 'High Stress Level',
-        impact: impact,
-        severity: 'high'
-      });
-    }
-
-    // Determine risk level
-    let level = 'low';
-    if (riskScore > 50) level = 'high';
-    else if (riskScore > 25) level = 'medium';
-
-    setRiskData({
-      level,
-      score: Math.min(riskScore, 100),
-      factors
-    });
-  };
-
   const handleDataUpdate = (newData) => {
     setStudentData(newData);
+  };
+
+  const handleStartOver = () => {
+    const freshData = {};
+    for (let i = 0; i < 28; i++) {
+      freshData[`field${i}`] = '';
+    }
+    setStudentData(freshData);
+    setQuizCompleted(false);
+    setHasAnalyzed(false);
+    setIsAnalyzing(false);
+    setRiskData({ level: '', score: 0, factors: [] });
   };
 
   return (
     <div className="app-container">
       <header className="app-header">
         <div className="header-content">
-          <Logo size={56} />
-          <div className="header-text">
-            <h1>Student Dropout Risk Prediction System</h1>
-            <p className='format'>AI-Powered Early Warning System</p>
+          <div className="header-left">
+            <div className="header-logo-mark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                <path d="M6 12v5c0 1.657 2.686 3 6 3s6-1.343 6-3v-5"/>
+              </svg>
+            </div>
+            <div className="header-text">
+              <h1>EduGuard</h1>
+              <p>Student Dropout Prediction</p>
+            </div>
           </div>
+          <span className="header-badge">Research Tool</span>
         </div>
       </header>
 
@@ -277,25 +163,27 @@ function App() {
         )}
 
         {/* Analysis Section - Show after quiz completion */}
-        {quizCompleted && !hasAnalyzed && (
+        {quizCompleted && !hasAnalyzed && !isAnalyzing && (
           <div className="analysis-ready-section">
             <div className="ready-card">
-              <div className="checkmark">✓</div>
-              <h2>All Questions Answered!</h2>
-              <p>Ready to analyze your data with AI</p>
+              <div className="checkmark-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+              <h2>All set.</h2>
+              <p>We've captured all 28 data points. Ready to run the prediction model on your student profile.</p>
               <button 
                 className="start-analysis-button"
                 onClick={handleAnalyze}
                 disabled={isAnalyzing}
               >
-                {isAnalyzing ? (
-                  <>
-                    <span className="spinner"></span>
-                    Analyzing...
-                  </>
-                ) : (
-                  '🚀 Start AI Analysis'
-                )}
+                <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 16 16 12 12 8"/>
+                  <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                Run Prediction
               </button>
             </div>
           </div>
@@ -305,9 +193,13 @@ function App() {
         {isAnalyzing && (
           <div className="awaiting-analysis">
             <div className="analysis-loader">
-              <div className="loader-circle"></div>
-              <h2>⏳ Awaiting Analysis...</h2>
-              <p>AI model is processing your data</p>
+              <div className="loader-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <h2>Analyzing profile...</h2>
+              <p>Processing 30 parameters through the prediction model</p>
             </div>
           </div>
         )}
@@ -322,6 +214,7 @@ function App() {
               hasAnalyzed={hasAnalyzed}
               prediction={riskData.prediction}
               message={riskData.message}
+              onStartOver={handleStartOver}
             />
           </div>
         )}
